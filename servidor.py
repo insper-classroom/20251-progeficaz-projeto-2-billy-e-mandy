@@ -34,7 +34,7 @@ def connect_db():
 
 app = Flask(__name__)
 
-@app.route('/imoveis', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get_imoveis():
 
     # conectar colm a base
@@ -53,6 +53,45 @@ def get_imoveis():
     results = cursor.fetchall()
     if not results:
         resp = {"erro": "Nenhum imovel encontrado"}
+        return resp, 404
+    else:
+        imoveis = []
+        for imovel in results:
+            imovel_dict = {
+                "id": imovel[0],
+                "logradouro": imovel[1],
+                "tipo_logradouro": imovel[2],
+                "bairro": imovel[3],
+                "cidade": imovel[4],
+                "cep": imovel[5],
+                "tipo": imovel[6],
+                "valor": imovel[7],
+                "data_aquisicao": imovel[8]
+            }
+            imoveis.append(imovel_dict)
+
+        resp = {"imoveis": imoveis}
+        return resp, 200
+    
+@app.route('/<int:id>', methods=['GET'])
+def get_imoveis_por_id(id):
+
+    # conectar colm a base
+    conn = connect_db()
+
+    if conn is None:
+        resp = {"erro": "Erro ao conectar ao banco de dados"}
+        return resp, 500
+
+    # se chegou até, tenho uma conexão válida
+    cursor = conn.cursor()
+
+    sql = "SELECT * from imoveis WHERE id = %s"
+    cursor.execute(sql, (id,))
+
+    results = cursor.fetchone()
+    if not results:
+        resp = {"erro": "Nenhum imovel com esse id encontrado"}
         return resp, 404
     else:
         imoveis = []
