@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from servidor import app, connect_db
+from app.servidor import app, connect_db
 
 @pytest.fixture
 def client():
