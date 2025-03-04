@@ -5,7 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import connect_db
 from config import config
-from app.servidor import app
+from servidor import app
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def client():
     with app.test_client() as client:
         yield client
 
-@patch("app.servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
+@patch("servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis(mock_connect_db, client):
     """Testa a rota /imoveis sem acessar o banco de dados real."""
 
@@ -50,7 +50,7 @@ def test_get_imoveis(mock_connect_db, client):
     }
     assert response.get_json() == expected_response
 
-@patch("app.servidor.connect_db")
+@patch("servidor.connect_db")
 def test_get_imoveis_vazio(mock_connect_db, client):
     """Testa a rota /imoveis quando o banco de dados não tem imoveis."""
 
@@ -71,7 +71,7 @@ def test_get_imoveis_vazio(mock_connect_db, client):
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Nenhum imovel encontrado"}
 
-@patch("app.servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
+@patch("servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis_por_id(mock_connect_db, client):
     """Testa a rota /imoveis sem acessar o banco de dados real."""
 
