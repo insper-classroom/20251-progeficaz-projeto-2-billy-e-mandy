@@ -83,7 +83,7 @@ def test_get_imoveis_por_id(mock_connect_db, client):
     mock_conn.cursor.return_value = mock_cursor
 
     # Simulamos o retorno do banco de dados
-    mock_cursor.fetchone.return_value = (1, "José Eiras Pinheiro", "Rua", "Barra da Tijuca", "Rio de Janeiro", "21240004", "casa em condomínio", 150000.00, "2018-01-31"),
+    mock_cursor.fetchone.return_value = (1, "José Eiras Pinheiro", "Rua", "Barra da Tijuca", "Rio de Janeiro", "21240004", "casa em condomínio", 150000.00, "2018-01-31")
     
 
     # Substituímos a função `connect_db` para retornar nosso Mock em vez de uma conexão real

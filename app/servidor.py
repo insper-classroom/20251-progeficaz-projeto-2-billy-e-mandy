@@ -48,27 +48,25 @@ def get_imoveis_por_id(id):
     cursor = conn.cursor()
     sql = "SELECT * from imoveis WHERE id = %s"
     cursor.execute(sql, (id,))
-    results = cursor.fetchone()
+    imovel = cursor.fetchone()
 
-    if not results:
+    if not imovel:
         return jsonify({"erro": "Nenhum imovel com esse id encontrado"}), 404
 
-    imoveis = []
-    for imovel in results:
-        imovel_dict = {
-            "id": imovel[0],
-            "logradouro": imovel[1],
-            "tipo_logradouro": imovel[2],
-            "bairro": imovel[3],
-            "cidade": imovel[4],
-            "cep": imovel[5],
-            "tipo": imovel[6],
-            "valor": imovel[7],
-            "data_aquisicao": imovel[8]
-        }
-        imoveis.append(imovel_dict)
+   
+    imovel_dict = {
+        "id": imovel[0],
+        "logradouro": imovel[1],
+        "tipo_logradouro": imovel[2],
+        "bairro": imovel[3],
+        "cidade": imovel[4],
+        "cep": imovel[5],
+        "tipo": imovel[6],
+        "valor": imovel[7],
+        "data_aquisicao": imovel[8]
+    }
 
-    return jsonify({"imoveis": imoveis}), 200
+    return jsonify({"imoveis": imovel_dict}), 200
 
 
 
