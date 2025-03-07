@@ -173,17 +173,9 @@ def test_add_imoveis(mock_connect_db, client):
     mock_conn.cursor.return_value = mock_cursor
 
    
-    mock_cursor.fetchall.return_value = [
-        (1, "José Eiras Pinheiro", "Rua", "Barra da Tijuca", "Rio de Janeiro", "21240004", "casa em condomínio", 150000.00, "2018-01-31"),
-        (2, "Sem Saída", "Rua", "Centro", "São Paulo", "04552999", "mansao", 1000000.00, "2022-05-30"),
-    ]
-    
-
-   
     mock_connect_db.return_value = mock_conn
 
     imovel = {
-        "id": 3,
         "logradouro": "Rua Elvira Ferraz",
         "tipo_logradouro": "Rua",
         "bairro": "Vila olimpia",
@@ -203,4 +195,6 @@ def test_add_imoveis(mock_connect_db, client):
         "imovel": imovel
     }
     assert response.get_json() == expected_response
+
+
 
