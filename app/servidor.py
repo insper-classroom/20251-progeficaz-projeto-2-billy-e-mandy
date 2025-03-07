@@ -79,14 +79,15 @@ def get_imoveis_por_tipo(tipo):
 
     # se chegou até, tenho uma conexão válida
     cursor = conn.cursor()
-    sql = "SELECT * from imoveis WHERE tipo = %s"
+    sql = "SELECT * from imoveis WHERE tipo =%s"
     cursor.execute(sql, (tipo,))
     results = cursor.fetchall()
+    conn.commit()
+    conn.close()    
 
     if not results:
         return jsonify({"erro": "Nenhum imovel com esse tipo encontrado"}), 404
-
-   
+    
     imoveis = []
     for imovel in results:
         imovel_dict = {
@@ -102,6 +103,7 @@ def get_imoveis_por_tipo(tipo):
         }
         imoveis.append(imovel_dict)
     return jsonify({"imoveis": imoveis}), 200
+    
 
 
 if __name__ == '__main__':
