@@ -15,6 +15,14 @@ def client():
     with app.test_client() as client:
         yield client
 
+
+
+
+
+
+
+
+
 @patch("servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis(mock_connect_db, client):
     """Testa a rota /imoveis sem acessar o banco de dados real."""
@@ -50,6 +58,16 @@ def test_get_imoveis(mock_connect_db, client):
     }
     assert response.get_json() == expected_response
 
+
+
+
+
+
+
+
+
+
+
 @patch("servidor.connect_db")
 def test_get_imoveis_vazio(mock_connect_db, client):
     """Testa a rota /imoveis quando o banco de dados não tem imoveis."""
@@ -70,6 +88,15 @@ def test_get_imoveis_vazio(mock_connect_db, client):
     # Verificamos se o código de status da resposta é 404 (Nenhum aluno encontrado)
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Nenhum imovel encontrado"}
+
+
+
+
+
+
+
+
+
 
 @patch("servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis_por_id(mock_connect_db, client):
@@ -102,6 +129,14 @@ def test_get_imoveis_por_id(mock_connect_db, client):
         "imoveis": {"id": 1, "logradouro": "José Eiras Pinheiro", "tipo_logradouro": "Rua", "bairro": "Barra da Tijuca", "cidade": "Rio de Janeiro", "cep": "21240004", "tipo": "casa em condomínio", "valor": 150000.00, "data_aquisicao": "2018-01-31"}  
     }
     assert response.get_json() == expected_response
+
+
+
+
+
+
+
+
 
 @patch("servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis_por_tipo(mock_connect_db, client):
@@ -140,6 +175,11 @@ def test_get_imoveis_por_tipo(mock_connect_db, client):
     assert response.get_json() == expected_response
 
 
+
+
+
+
+
 @patch("servidor.connect_db")
 def test_get_imoveis_por_tipo_vazio(mock_connect_db, client):
     """Testa a rota /imoveis quando o banco de dados não tem imoveis."""
@@ -162,6 +202,13 @@ def test_get_imoveis_por_tipo_vazio(mock_connect_db, client):
     # Verificamos se o código de status da resposta é 404 (Nenhum aluno encontrado)
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Nenhum imovel com esse tipo encontrado"}
+
+
+
+
+
+
+
 
 @patch("servidor.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis_por_cidade(mock_connect_db, client):
@@ -200,6 +247,12 @@ def test_get_imoveis_por_cidade(mock_connect_db, client):
     assert response.get_json() == expected_response
 
 
+
+
+
+
+
+
 @patch("servidor.connect_db")
 def test_get_imoveis_por_cidade_vazia(mock_connect_db, client):
     """Testa a rota /imoveis quando o banco de dados não tem imoveis."""
@@ -222,6 +275,13 @@ def test_get_imoveis_por_cidade_vazia(mock_connect_db, client):
     # Verificamos se o código de status da resposta é 404 (Nenhum aluno encontrado)
     assert response.status_code == 404
     assert response.get_json() == {"erro": "Nenhum imovel com essa cidade encontrado"}
+
+
+
+
+
+
+
 
 @patch("servidor.connect_db")
 def test_add_imoveis(mock_connect_db, client):
@@ -258,3 +318,49 @@ def test_add_imoveis(mock_connect_db, client):
 
 
 
+
+
+
+
+
+
+@patch("servidor.connect_db")
+def test_update_imoveis(mock_connect_db, client):
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_connect_db.return_value = mock_conn
+
+    id = 2
+
+    imovel = {
+        "id": 2,
+        "logradouro": "Rua Elvira Ferraz",
+        "tipo_logradouro": "Rua",
+        "bairro": "Vila olimpia",
+        "cidade": "São Paulo",
+        "cep": "12345678",
+        "tipo": "apartamento",
+        "valor": 1000000.00,
+        "data_aquisicao": "2020-01-01" 
+    }
+
+    response = client.put(f"/imoveis/{id}", json=imovel)
+    assert response.status_code == 200
+
+    # Verifica se função realmente executou o UPDATE 
+    # Pode ser que a função não executou o UPDATE ou os campos não tenham sido alterados corretamente
+    mock_cursor.execute.assert_called_with(
+        "UPDATE imoveis SET logradouro=%s, tipo_logradouro=%s, bairro=%s, cidade=%s, cep=%s, tipo=%s, valor=%s, data_aquisicao=%s WHERE id=%s",
+        ("Rua Elvira Ferraz", "Rua", "Vila olimpia", "São Paulo", "12345678", "apartamento", 1000000.00, "2020-01-01", 2)
+    )
+
+    # Verifica se a alteração foi salva
+    # A alteração pode até ser feita mas nada garante que ela não seja salva. 
+    mock_conn.commit.assert_called_once()
+    # Essa linha garante verifica isso 
+
+    expected_response = {"mensagem": "Imóvel atualizado com sucesso!"}
+    assert response.get_json() == expected_response
