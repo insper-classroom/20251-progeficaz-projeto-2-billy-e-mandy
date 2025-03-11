@@ -221,7 +221,7 @@ def test_get_imoveis_por_cidade_vazia(mock_connect_db, client):
 
     # Verificamos se o código de status da resposta é 404 (Nenhum aluno encontrado)
     assert response.status_code == 404
-    assert response.get_json() == {"erro": "Nenhum imovel com essa cidade encontrada"}
+    assert response.get_json() == {"erro": "Nenhum imovel com essa cidade encontrado"}
 
 @patch("servidor.connect_db")
 def test_add_imoveis(mock_connect_db, client):
