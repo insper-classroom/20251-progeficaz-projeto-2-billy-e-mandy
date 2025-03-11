@@ -126,7 +126,7 @@ def test_get_imoveis_por_tipo(mock_connect_db, client):
     tipo = 'mansao'
 
     # Fazemos a requisição para a API
-    response = client.get(f"/imoveis/{tipo}")
+    response = client.get(f"/imoveis/tipo/{tipo}")
 
     # Verificamos se o código de status da resposta é 200 (OK)
     assert response.status_code == 200
@@ -157,7 +157,7 @@ def test_get_imoveis_por_tipo_vazio(mock_connect_db, client):
     tipo = 'mansao'
 
     # Fazemos a requisição para a API
-    response = client.get(f"/imoveis/{tipo}")
+    response = client.get(f"/imoveis/tipo/{tipo}")
 
     # Verificamos se o código de status da resposta é 404 (Nenhum aluno encontrado)
     assert response.status_code == 404
@@ -186,7 +186,7 @@ def test_get_imoveis_por_cidade(mock_connect_db, client):
     cidade = 'São Paulo'
 
     # Fazemos a requisição para a API
-    response = client.get(f"/imoveis/{cidade}")
+    response = client.get(f"/imoveis/cidade/{cidade}")
 
     # Verificamos se o código de status da resposta é 200 (OK)
     assert response.status_code == 200
@@ -217,7 +217,7 @@ def test_get_imoveis_por_cidade_vazia(mock_connect_db, client):
     cidade = 'São Paulo'
 
     # Fazemos a requisição para a API
-    response = client.get(f"/imoveis/{cidade}")
+    response = client.get(f"/imoveis/cidade/{cidade}")
 
     # Verificamos se o código de status da resposta é 404 (Nenhum aluno encontrado)
     assert response.status_code == 404

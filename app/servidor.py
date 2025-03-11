@@ -70,7 +70,7 @@ def get_imoveis_por_id(id):
     return jsonify({"imoveis": imovel_dict}), 200
 
 
-@app.route('/imoveis/<string:tipo>', methods=['GET'])
+@app.route('/imoveis/tipo/<string:tipo>', methods=['GET'])
 def get_imoveis_por_tipo(tipo):
     # conectar colm a base
     conn = connect_db()
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
 
 
-@app.route('/imoveis/<string:cidade>', methods=['GET'])
+@app.route('/imoveis/cidade/<string:cidade>', methods=['GET'])
 def get_imoveis_por_cidade(cidade):
     # conectar colm a base
     conn = connect_db()
