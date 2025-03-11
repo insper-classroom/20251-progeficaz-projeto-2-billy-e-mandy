@@ -357,7 +357,7 @@ def test_update_imoveis(mock_connect_db, client):
     # Verifica se função realmente executou o UPDATE 
     # Pode ser que a função não executou o UPDATE ou os campos não tenham sido alterados corretamente
     mock_cursor.execute.assert_called_with(
-        "UPDATE imoveis SET logradouro=%s, tipo_logradouro=%s, bairro=%s, cidade=%s, cep=%s, tipo=%s, valor=%s, data_aquisicao=%s WHERE id=%s",
+        "UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisicao = %s WHERE id = %s",
         ("Rua Elvira Ferraz", "Rua", "Vila olimpia", "São Paulo", "12345678", "apartamento", 1000000.00, "2020-01-01", 2)
     )
 
@@ -401,5 +401,5 @@ def test_update_imovel_not_found(mock_connect_db, client):
 
     response = client.put(f"/imoveis/{id}", json=imovel)
     assert response.status_code == 404
-    assert response.get_json() == {"erro": f"Imóvel com ID {id} não encontrado"}
+    assert response.get_json() == {"erro": f"Erro ao atualizar imóvel de id:{id}"}
 

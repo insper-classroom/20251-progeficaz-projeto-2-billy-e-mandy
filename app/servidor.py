@@ -41,6 +41,11 @@ def get_imoveis():
 
 
 
+
+
+
+
+
 @app.route('/imoveis', methods=['POST'])
 def add_imoveis():
     novo_imovel = request.json
@@ -55,6 +60,46 @@ def add_imoveis():
     conn.commit()
     conn.close()
     return jsonify({"imovel": novo_imovel}), 201
+
+
+
+
+
+
+
+@app.route('/imoveis/<int:id>', methods=['PUT'])
+def update_imoveis(id):
+    # Pegando os dados do imóvel que foram enviados na requisição
+    imovel = request.json 
+
+    conn = connect_db()
+
+    if conn is None:
+        return jsonify({"error": "Erro ao conectar ao banco de dados"}), 500
+
+    cursor = conn.cursor()
+    sql = "UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisicao = %s WHERE id = %s"
+    
+    valores = (
+            imovel["logradouro"], imovel["tipo_logradouro"], imovel["bairro"],
+            imovel["cidade"], imovel["cep"], imovel["tipo"],
+            imovel["valor"], imovel["data_aquisicao"], id
+        )
+    
+    cursor.execute(sql, valores)
+    results = cursor.fetchone()
+    conn.commit()
+    conn.close()
+
+    if not results:
+        return jsonify({"erro": f"Erro ao atualizar imóvel de id:{id}"}), 404
+    
+    return  jsonify({"mensagem": "Imóvel atualizado com sucesso!"}), 200 
+
+
+
+
+
 
     
 @app.route('/imoveis/<int:id>', methods=['GET'])
@@ -87,6 +132,11 @@ def get_imoveis_por_id(id):
         }
 
     return jsonify({"imoveis": imovel_dict}), 200
+
+
+
+
+
 
 
 @app.route('/imoveis/tipo/<string:tipo>', methods=['GET'])
@@ -128,6 +178,11 @@ def get_imoveis_por_tipo(tipo):
     
 
 
+
+
+
+
+
 @app.route('/imoveis/cidade/<string:cidade>', methods=['GET'])
 def get_imoveis_por_cidade(cidade):
     # conectar colm a base
@@ -166,6 +221,10 @@ def get_imoveis_por_cidade(cidade):
         imoveis.append(imovel_dict)
 
     return jsonify({"imoveis": imoveis}), 200
+
+
+
+
 
 
 
