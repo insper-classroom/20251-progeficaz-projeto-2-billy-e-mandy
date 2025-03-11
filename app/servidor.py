@@ -123,3 +123,42 @@ def add_imoveis():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+@app.route('/imoveis/<string:cidade>', methods=['GET'])
+def get_imoveis_por_cidade(cidade):
+    # conectar colm a base
+    conn = connect_db()
+
+    if conn is None:
+        return jsonify({"error": "Erro ao conectar ao banco de dados"}), 500
+
+    # se chegou até, tenho uma conexão válida
+    cursor = conn.cursor()
+    sql = "SELECT * from imoveis WHERE tipo = %s"
+    cursor.execute(sql, (cidade,))
+    results = cursor.fetchall()
+
+    if not results:
+        return jsonify({"erro": "Nenhum imovel com esse tipo encontrado"}), 404
+
+   
+    imoveis = []
+    for imovel in results:
+        imovel_dict = {
+            "id": imovel[0],
+            "logradouro": imovel[1],
+            "tipo_logradouro": imovel[2],
+            "bairro": imovel[3],
+            "cidade": imovel[4],
+            "cep": imovel[5],
+            "tipo": imovel[6],
+            "valor": imovel[7],
+            "data_aquisicao": imovel[8]
+        }
+        imoveis.append(imovel_dict)
+    return jsonify({"imoveis": imoveis}), 200
+
