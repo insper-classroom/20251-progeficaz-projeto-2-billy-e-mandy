@@ -4,6 +4,7 @@ from utils import connect_db
 
 app = Flask(__name__)
 
+@app.route('/')
 @app.route('/imoveis', methods=['GET'])
 def get_imoveis():
     # conectar colm a base
@@ -37,6 +38,24 @@ def get_imoveis():
 
         imoveis.append(imovel_dict)
     return jsonify({"imoveis": imoveis}), 200
+
+
+
+@app.route('/imoveis', methods=['POST'])
+def add_imoveis():
+    novo_imovel = request.json
+    conn = connect_db()
+    if conn is None:
+        return jsonify({"error": "Erro ao conectar ao banco de dados"}), 500
+    
+    cursor = conn.cursor()
+    sql = "INSERT INTO imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s)"
+
+    cursor.execute(sql, (novo_imovel['logradouro'], novo_imovel['tipo_logradouro'], novo_imovel['bairro'], novo_imovel['cidade'], novo_imovel['cep'], novo_imovel['tipo'], novo_imovel['valor'], novo_imovel['data_aquisicao']))
+    conn.commit()
+    conn.close()
+    return jsonify({"imovel": novo_imovel}), 201
+
     
 @app.route('/imoveis/<int:id>', methods=['GET'])
 def get_imoveis_por_id(id):
@@ -108,28 +127,6 @@ def get_imoveis_por_tipo(tipo):
     return jsonify({"imoveis": imoveis}), 200
     
 
-@app.route('/imoveis', methods=['POST'])
-def add_imoveis():
-    novo_imovel = request.json
-    conn = connect_db()
-    if conn is None:
-        return jsonify({"error": "Erro ao conectar ao banco de dados"}), 500
-    
-    cursor = conn.cursor()
-    sql = "INSERT INTO imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s)"
-
-    cursor.execute(sql, (novo_imovel['logradouro'], novo_imovel['tipo_logradouro'], novo_imovel['bairro'], novo_imovel['cidade'], novo_imovel['cep'], novo_imovel['tipo'], novo_imovel['valor'], novo_imovel['data_aquisicao']))
-    conn.commit()
-    conn.close()
-    return jsonify({"imovel": novo_imovel}), 201
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
-
 
 @app.route('/imoveis/cidade/<string:cidade>', methods=['GET'])
 def get_imoveis_por_cidade(cidade):
@@ -169,4 +166,9 @@ def get_imoveis_por_cidade(cidade):
         imoveis.append(imovel_dict)
 
     return jsonify({"imoveis": imoveis}), 200
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
