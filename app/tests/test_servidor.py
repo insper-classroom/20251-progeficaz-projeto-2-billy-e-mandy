@@ -347,6 +347,10 @@ def test_update_imoveis(mock_connect_db, client):
         "data_aquisicao": "2020-01-01" 
     }
 
+    # Verifica se o imóvel existe 
+    mock_cursor.fetchone.return_value = {"id": id}
+    mock_cursor.rowcount = 1 
+
     response = client.put(f"/imoveis/{id}", json=imovel)
     assert response.status_code == 200
 
@@ -364,3 +368,38 @@ def test_update_imoveis(mock_connect_db, client):
 
     expected_response = {"mensagem": "Imóvel atualizado com sucesso!"}
     assert response.get_json() == expected_response
+
+
+
+
+
+@patch("servidor.connect_db")
+def test_update_imovel_not_found(mock_connect_db, client):
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_connect_db.return_value = mock_conn
+
+    id = 2
+
+    imovel = {
+        "id": 1,
+        "logradouro": "Rua Quatá",
+        "tipo_logradouro": "Rua",
+        "bairro": "Vila olimpia",
+        "cidade": "São Paulo",
+        "cep": "12345678",
+        "tipo": "apartamento",
+        "valor": 100000000000000.00,
+        "data_aquisicao": "2020-01-01" 
+    }
+
+    # Verifica o caso de imóvel não encontrado 
+    mock_cursor.fetchone.return_value = None 
+
+    response = client.put(f"/imoveis/{id}", json=imovel)
+    assert response.status_code == 404
+    assert response.get_json() == {"erro": f"Imóvel com ID {id} não encontrado"}
+
