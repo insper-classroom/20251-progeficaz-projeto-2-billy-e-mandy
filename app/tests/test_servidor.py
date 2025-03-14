@@ -430,7 +430,7 @@ def test_delete_imoveis(mock_connect_db, client):
 
 
 @patch("servidor.connect_db")
-def erro_test_delete_imoveis(mock_connect_db, client):
+def test_delete_imoveis_not_found(mock_connect_db, client):
 
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -441,15 +441,12 @@ def erro_test_delete_imoveis(mock_connect_db, client):
     id = 1
 
     # Verifica se o imóvel existe 
-    mock_cursor.fetchone.return_value = (id,)
-    mock_cursor.rowcount = 10
+    mock_cursor.fetchone.return_value = None
+    mock_cursor.rowcount = 0
 
     response = client.delete(f"/imoveis/{id}")
-    assert response.status_code == 200
+    assert response.status_code == 404
+    assert response.get_json() == {"erro": "Imóvel não encontrado"}
 
-
-    expected_response = {"error": "Imóvel não encontrado"}
-
-    assert response.get_json() == expected_response
 
 
