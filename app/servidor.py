@@ -97,11 +97,30 @@ def update_imoveis(id):
     return  jsonify({"mensagem": "Imóvel atualizado com sucesso!"}), 200 
 
 
+@app.route('/imoveis/<int:id>', methods=["DELETE"])
+def delete_imoveis(id):
+    conn = connect_db()
 
-
-
-
+    if conn is None:
+        return jsonify({"error": "Erro ao conectar ao banco de dados"}), 500
     
+    cursor = conn.cursor()
+    sql = "DELETE FROM imoveis WHERE id = %s"
+    cursor.execute(sql, (id,))
+    imovel = cursor.fetchone()
+
+
+    if not imovel:
+        conn.close()
+        return jsonify({"erro": "Imóvel não encontrado"}), 404
+
+    conn.commit()
+    conn.close()
+
+    return  jsonify({"mensagem": "Imóvel deletado com sucesso"}), 200
+
+
+
 @app.route('/imoveis/<int:id>', methods=['GET'])
 def get_imoveis_por_id(id):
     # conectar colm a base
