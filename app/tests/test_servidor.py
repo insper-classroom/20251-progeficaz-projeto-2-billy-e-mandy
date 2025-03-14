@@ -461,7 +461,8 @@ def erro_test_delete_imovel(mock_connect_db, client):
 
     mock_conn.commit.assert_called_once()
 
-    expected_response = {"mensagem": "Imóvel deletado com sucesso!"
+    expected_response = {
+        "mensagem": "Imóvel deletado com sucesso!"
     }
 
     assert response.get_json() == expected_response
