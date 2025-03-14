@@ -405,39 +405,8 @@ def test_update_imovel_not_found(mock_connect_db, client):
 
 
 
-
-def test_delete_imovel(mock_connect_db, client):
-
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_connect_db.return_value = mock_conn
-
-    id = 1
-
-    # Verifica se o imóvel existe 
-    mock_cursor.fetchone.return_value = {"id": id}
-    mock_cursor.rowcount = 1 
-
-    response = client.put(f"/imoveis/{id}")
-    assert response.status_code == 200
-
-    mock_cursor.execute.assert_called_with(
-        "DELETE FROM imoveis WHERE id = %s",
-        (id,)
-    )
-
-    mock_conn.commit.assert_called_once()
-
-    expected_response = {"mensagem": "Imóvel deletado com sucesso!"
-    }
-
-    assert response.get_json() == expected_response
-
-
-
-def erro_test_delete_imovel(mock_connect_db, client):
+@patch("servidor.connect_db")
+def test_delete_imoveis(mock_connect_db, client):
 
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -448,21 +417,39 @@ def erro_test_delete_imovel(mock_connect_db, client):
     id = 1
 
     # Verifica se o imóvel existe 
-    mock_cursor.fetchone.return_value = {"id": id}
+    mock_cursor.fetchone.return_value = (id,)
     mock_cursor.rowcount = 1 
 
-    response = client.put(f"/imoveis/{id}")
+    response = client.delete(f"/imoveis/{id}")
     assert response.status_code == 200
 
-    mock_cursor.execute.assert_called_with(
-        "DELETE FROM imoveis WHERE id = %s",
-        (id,)
-    )
 
-    mock_conn.commit.assert_called_once()
-
-    expected_response = {
-        "mensagem": "Imóvel deletado com sucesso!"
-    }
+    expected_response = {"mensagem": "Imóvel deletado com sucesso"}
 
     assert response.get_json() == expected_response
+
+
+@patch("servidor.connect_db")
+def erro_test_delete_imoveis(mock_connect_db, client):
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_connect_db.return_value = mock_conn
+
+    id = 1
+
+    # Verifica se o imóvel existe 
+    mock_cursor.fetchone.return_value = (id,)
+    mock_cursor.rowcount = 10
+
+    response = client.delete(f"/imoveis/{id}")
+    assert response.status_code == 200
+
+
+    expected_response = {"error": "Imóvel não encontrado"}
+
+    assert response.get_json() == expected_response
+
+
