@@ -417,7 +417,7 @@ def test_delete_imoveis(mock_connect_db, client):
     id = 1
 
     # Verifica se o imóvel existe 
-    mock_cursor.fetchone.return_value = (id,)
+    # mock_cursor.fetchone.return_value = (id,)
     mock_cursor.rowcount = 1 
 
     response = client.delete(f"/imoveis/{id}")
@@ -441,7 +441,7 @@ def test_delete_imoveis_not_found(mock_connect_db, client):
     id = 1
 
     # Verifica se o imóvel existe 
-    mock_cursor.fetchone.return_value = None
+    # mock_cursor.fetchone.return_value = None
     mock_cursor.rowcount = 0
 
     response = client.delete(f"/imoveis/{id}")

@@ -107,10 +107,10 @@ def delete_imoveis(id):
     cursor = conn.cursor()
     sql = "DELETE FROM imoveis WHERE id = %s"
     cursor.execute(sql, (id,))
-    imovel = cursor.fetchone()
+    imovel_deletado = cursor.rowcount
 
 
-    if not imovel:
+    if not imovel_deletado:
         conn.close()
         return jsonify({"erro": "Imóvel não encontrado"}), 404
 
